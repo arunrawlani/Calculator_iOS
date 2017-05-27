@@ -10,11 +10,11 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var display: UILabel!
+    @IBOutlet private weak var display: UILabel!
     
     var userIsInTheMiddleOfTyping = false
 
-    @IBAction func touchedButton(_ sender: UIButton){
+    @IBAction private func touchedButton(_ sender: UIButton){
         let digit = sender.currentTitle!
         if userIsInTheMiddleOfTyping{
             let textCurrentlyInDisplay = display!.text!
@@ -27,13 +27,29 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTyping = true
     }
 
-    @IBAction func performOperation(_ sender: UIButton) {
-        if let mathematicalSymbol = sender.currentTitle{
-            if mathematicalSymbol == "π"{
-                display.text = String(M_PI)
-            }
+    //now we will introduce a COMPUTED PROPERTY
+    //FOLLOWING IS AN EXAMPLE OF WHAT A COMPUTED PROPERTY IS
+    
+    private var displayValue: Double {
+        get{
+            return Double(display.text!)! //this is sending an optional because it may not be convertible. Double of lets say "Hello" is going to be something undefined.
+        }
+        set{
+            display.text = String(newValue) //newValue is a special keyword
         }
     }
-
+    
+    private var brain = CalculatorBrain()
+    
+    @IBAction func performOperation(_ sender: UIButton) {
+        if userIsInTheMiddleOfTyping {
+            brain.setOperand(operand: displayValue)
+            userIsInTheMiddleOfTyping = false
+        }
+        if let mathematicalSymbol = sender.currentTitle{
+            brain.performOperation(symbol: mathematicalSymbol)
+        }
+        displayValue = brain.result
+    }
 }
 
