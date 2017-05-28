@@ -20,17 +20,21 @@ class CalculatorBrain{
         accumulator = operand
     }
     
-    var operations: Dictionary<String, Operation> = [
+    //LOOK BELOW TO LOOK FOR HOW CLOSURES WORK
+    private var operations: Dictionary<String, Operation> = [
         "π" : Operation.Constant(M_PI),
         "e" : Operation.Constant(M_E),
         "√" : Operation.UnaryOperation(sqrt),
         "cos": Operation.UnaryOperation(cos),
-        "×" : Operation.BinaryOperation(multiply),
+        "×" : Operation.BinaryOperation({ $0 * $1 }),//This demonstrates the beautiful use of closures in Swift
+        "+" : Operation.BinaryOperation({ $0 + $1 }),
+        "-" : Operation.BinaryOperation({ $0 - $1 }),
+        "÷" : Operation.BinaryOperation({ $0 / $1 }),
         "=" : Operation.Equals
         
     ]
     
-    enum Operation{ //note: enums are allowed to have methods
+    private enum Operation{ //note: enums are allowed to have methods
         case Constant(Double)
         case UnaryOperation((Double) -> Double)
         case BinaryOperation((Double, Double) -> Double)
@@ -63,7 +67,7 @@ class CalculatorBrain{
     
     private var pending: PendingBinaryOperationInfo?
     
-    struct PendingBinaryOperationInfo { //NOTE: Classes passed by reference, Structs passed by value just like enums. Structs dont make the copy unless you actually change the copy. In structs free initializer is all the vars in it, unlike in Classes where the free initializer is empty.
+    private struct PendingBinaryOperationInfo { //NOTE: Classes passed by reference, Structs passed by value just like enums. Structs dont make the copy unless you actually change the copy. In structs free initializer is all the vars in it, unlike in Classes where the free initializer is empty.
         var binaryFunction: ((Double, Double) -> Double)
         var firstOperand: Double
     }
@@ -74,3 +78,6 @@ class CalculatorBrain{
         }
     }
 }
+
+//OTHER NOTES:
+//What is a closure? It is a in-line function that captures the state of its environment
